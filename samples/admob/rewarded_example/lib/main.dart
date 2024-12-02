@@ -1,20 +1,49 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 import 'app_bar_item.dart';
 import 'consent_manager.dart';
 import 'countdown_timer.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MaterialApp(
-    home: RewardedExample(),
-  ));
+  runApp(const MyApp());
 }
 
-/// An example app that loads a rewarded ad.
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Rewarded Example',
+      home: const HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            // Redirige a RewardedExample cuando el botón es presionado
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RewardedExample()),
+            );
+          },
+          child: const Text('Ir a la vista de Alan Graph'),
+        ),
+      ),
+    );
+  }
+}
+
 class RewardedExample extends StatefulWidget {
   const RewardedExample({super.key});
 
@@ -43,25 +72,17 @@ class RewardedExampleState extends State<RewardedExample> {
 
     _consentManager.gatherConsent((consentGatheringError) {
       if (consentGatheringError != null) {
-        // Consent not obtained in current session.
         debugPrint(
             "${consentGatheringError.errorCode}: ${consentGatheringError.message}");
       }
 
-      // Kick off the first play of the "game".
       _startNewGame();
-
-      // Check if a privacy options entry point is required.
       _getIsPrivacyOptionsRequired();
-
-      // Attempt to initialize the Mobile Ads SDK.
       _initializeMobileAdsSDK();
     });
 
-    // This sample attempts to load ads using consent obtained in the previous session.
     _initializeMobileAdsSDK();
 
-    // Show the "Watch video" button when the timer reaches zero.
     _countdownTimer.addListener(() => setState(() {
           if (_countdownTimer.isComplete) {
             _gameOver = true;
@@ -97,69 +118,77 @@ class RewardedExampleState extends State<RewardedExample> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Rewarded Example',
-      home: Scaffold(
-          appBar: AppBar(
-              title: const Text('Rewarded Example'), actions: _appBarActions()),
-          body: Stack(
-            children: [
-              const Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Text(
-                      'The Impossible Game',
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    ),
-                  )),
-              Align(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(_countdownTimer.isComplete
-                          ? 'Game over!' 
-                          
-                          : '${_countdownTimer.timeLeft} seconds left!'),
-                      Visibility(
-                        visible: _countdownTimer.isComplete,
-                        child: TextButton(
-                          onPressed: () {
-                            _startNewGame();
-                            _loadAd();
-                          },
-                          child: const Text('Play Again'),
-                        ),
-                      ),
-                      Visibility(
-                          visible: _showWatchVideoButton,
-                          child: TextButton(
-                            onPressed: () {
-                              setState(() => _showWatchVideoButton = false);
-
-                              _rewardedAd?.show(onUserEarnedReward:
-                                  (AdWithoutView ad, RewardItem rewardItem) {
-                                // ignore: avoid_print
-                                print('Reward amount: ${rewardItem.amount}');
-                                setState(
-                                    () => _coins += rewardItem.amount.toInt());
-                              });
-                            },
-                            child: const Text(
-                                'Watch video for additional 10 coins'),
-                          ))
-                    ],
-                  )),
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Text('Coins: $_coins')),
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 221, 225, 226),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 225, 223, 230),
+        title: const Text('Alan Graph Special PDF'),
+        actions: _appBarActions(),
+      ),
+      body: Stack(
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Text(
+                    'Alan Graph',
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 45),
+                  Image.asset('assets/alan_graph.jpg', height: 190),
+                ],
               ),
-            ],
-          )),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(_countdownTimer.isComplete
+                    ? ' '
+                    : 'Conectando espere ${_countdownTimer.timeLeft} segundos...'),
+                Visibility(
+                  visible: _countdownTimer.isComplete,
+                  child: TextButton(
+                    onPressed: () {
+                      _startNewGame();
+                      _loadAd();
+                    },
+                    child: const Text(' Quiero mi Alan Special Grpah'),
+                  ),
+                ),
+                Visibility(
+                  visible: _showWatchVideoButton,
+                  child: TextButton(
+                    onPressed: () {
+                      setState(() => _showWatchVideoButton = false);
+
+                      _rewardedAd?.show(onUserEarnedReward:
+                          (AdWithoutView ad, RewardItem rewardItem) {
+                        print('Reward amount: ${rewardItem.amount}');
+                        setState(() => _coins += rewardItem.amount.toInt());
+                      });
+                    },
+                    child: const Text(
+                        'Ver video para obtener 10 Alan Graph exportaciones'),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Text('Alan Graph: $_coins'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -172,38 +201,37 @@ class RewardedExampleState extends State<RewardedExample> {
 
     return <Widget>[
       PopupMenuButton<AppBarItem>(
-          itemBuilder: (context) => array
-              .map((item) => PopupMenuItem<AppBarItem>(
-                    value: item,
-                    child: Text(
-                      item.label,
-                    ),
-                  ))
-              .toList(),
-          onSelected: (item) {
-            _pauseGame();
-            switch (item.value) {
-              case 0:
-                MobileAds.instance.openAdInspector((error) {
-                  // Error will be non-null if ad inspector closed due to an error.
-                  _resumeGame();
-                });
-              case 1:
-                _consentManager.showPrivacyOptionsForm((formError) {
-                  if (formError != null) {
-                    debugPrint("${formError.errorCode}: ${formError.message}");
-                  }
-                  _resumeGame();
-                });
-            }
-          })
+        itemBuilder: (context) => array
+            .map((item) => PopupMenuItem<AppBarItem>(
+                  value: item,
+                  child: Text(
+                    item.label,
+                  ),
+                ))
+            .toList(),
+        onSelected: (item) {
+          _pauseGame();
+          switch (item.value) {
+            case 0:
+              MobileAds.instance.openAdInspector((error) {
+                _resumeGame();
+              });
+              break;
+            case 1:
+              _consentManager.showPrivacyOptionsForm((formError) {
+                if (formError != null) {
+                  debugPrint("${formError.errorCode}: ${formError.message}");
+                }
+                _resumeGame();
+              });
+              break;
+          }
+        },
+      ),
     ];
   }
 
-  /// Loads a rewarded ad.
   void _loadAd() async {
-    // Only load an ad if the Mobile Ads SDK has gathered consent aligned with
-    // the app's configured messages.
     var canRequestAds = await _consentManager.canRequestAds();
     if (!canRequestAds) {
       return;
@@ -212,32 +240,27 @@ class RewardedExampleState extends State<RewardedExample> {
     RewardedAd.load(
         adUnitId: _adUnitId,
         request: const AdRequest(),
-        rewardedAdLoadCallback: RewardedAdLoadCallback(onAdLoaded: (ad) {
-          ad.fullScreenContentCallback = FullScreenContentCallback(
-              // Called when the ad showed the full screen content.
-              onAdShowedFullScreenContent: (ad) {},
-              // Called when an impression occurs on the ad.
-              onAdImpression: (ad) {},
-              // Called when the ad failed to show full screen content.
-              onAdFailedToShowFullScreenContent: (ad, err) {
-                ad.dispose();
-              },
-              // Called when the ad dismissed full screen content.
-              onAdDismissedFullScreenContent: (ad) {
-                ad.dispose();
-              },
-              // Called when a click is recorded for an ad.
-              onAdClicked: (ad) {});
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+          onAdLoaded: (ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+                onAdShowedFullScreenContent: (ad) {},
+                onAdImpression: (ad) {},
+                onAdFailedToShowFullScreenContent: (ad, err) {
+                  ad.dispose();
+                },
+                onAdDismissedFullScreenContent: (ad) {
+                  ad.dispose();
+                },
+                onAdClicked: (ad) {});
 
-          // Keep a reference to the ad so you can show it later.
-          _rewardedAd = ad;
-        }, onAdFailedToLoad: (LoadAdError error) {
-          // ignore: avoid_print
-          print('RewardedAd failed to load: $error');
-        }));
+            _rewardedAd = ad;
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('RewardedAd failed to load: $error');
+          },
+        ));
   }
 
-  /// Redraw the app bar actions if a privacy options entry point is required.
   void _getIsPrivacyOptionsRequired() async {
     if (await _consentManager.isPrivacyOptionsRequired()) {
       setState(() {
@@ -246,8 +269,6 @@ class RewardedExampleState extends State<RewardedExample> {
     }
   }
 
-  /// Initialize the Mobile Ads SDK if the SDK has gathered consent aligned with
-  /// the app's configured messages.
   void _initializeMobileAdsSDK() async {
     if (_isMobileAdsInitializeCalled) {
       return;
@@ -255,11 +276,7 @@ class RewardedExampleState extends State<RewardedExample> {
 
     if (await _consentManager.canRequestAds()) {
       _isMobileAdsInitializeCalled = true;
-
-      // Initialize the Mobile Ads SDK.
       MobileAds.instance.initialize();
-
-      // Load an ad.
       _loadAd();
     }
   }
