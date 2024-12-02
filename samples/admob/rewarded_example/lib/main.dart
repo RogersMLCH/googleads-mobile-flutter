@@ -120,7 +120,8 @@ class RewardedExampleState extends State<RewardedExample> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(_countdownTimer.isComplete
-                          ? 'Game over!'
+                          ? 'Game over!' 
+                          
                           : '${_countdownTimer.timeLeft} seconds left!'),
                       Visibility(
                         visible: _countdownTimer.isComplete,
